@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use Redirect;
+use Illuminate\Support\Facades\Validator;
 class HomeController extends Controller
 {
     /**
@@ -24,7 +25,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $data = User::all();
+        return view('home',['data'=>$data]);
     }
     /**
      * Write code on Method
@@ -42,20 +44,43 @@ class HomeController extends Controller
      *
      * @return response()
      */
+
+  
+
     public function sendNotification(Request $request)
     {
+
+        $validated = $request->validate([
+        'title' => 'required|max:20',
+        'body' => 'required|max:50',
+        'action'=>'required',
+        
+    ]);
         $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();
+        $ResponseAction;
+        // $testToken = [$request->user];
+        if($request->user!="All"){
+            $ResponseAction= [$request->user];
+        }
+        else{
+            $ResponseAction = User::whereNotNull('device_token')->pluck('device_token')->all();
+        }
 
-        $SERVER_API_KEY = 'AAAAyzXj8Ts:APA91bH4tymiYFKKZsCvAAMThBRSHmZcVGWdyHbLVndmCoq5KeGSGvQL73yot32D3gLML2MtszTh1okBDdSj21z70qRWTwqyBSzjVPmSx7WYx508UvX3FToT0KZI34kmC8fQfViwGih4';
-
+        $img = $request->img;
+        $SERVER_API_KEY = 'AAAAQ1SQO3M:APA91bFtARUX4-NUPqWDDObXVfvwzJiD0F2T_v7a-FPhmf814fdjs03kjIB940qyarbihJBDGnmtwQRNMElNnEWluODkHXrRrHOMS9gp5ZMXj-oGfpfeedy0jcghwzfGf6ZZRUHl6Mi8';
+        $Image =\Session::get('img'); //Getting the icon temp name
+        
         $data = [
-            "registration_ids" => $firebaseToken,
+            "registration_ids" => $ResponseAction,
             "notification" => [
                 "title" => $request->title,
                 "body" => $request->body,
-                "content_available" => true,
-                "priority" => "high",
-            ]
+                "icon"=> "storage/".$Image,
+                'click_action' => 'http://127.0.0.1:8000/' . $request->action, //Change to https when hosted. Only works with system url
+                
+              
+
+            ],
         ];
         $dataString = json_encode($data);
 
@@ -75,6 +100,10 @@ class HomeController extends Controller
 
         $response = curl_exec($ch);
 
-        dd($response);
+        dd($dataString);
+      
     }
+
+
+    
 }

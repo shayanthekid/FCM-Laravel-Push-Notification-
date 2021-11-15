@@ -3,10 +3,25 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
+        
         <div class="col-md-8">
             <center>
                 <button id="btn-nft-enable" onclick="initFirebaseMessagingRegistration()" class="btn btn-danger btn-xs btn-flat">Allow for Notification</button>
             </center>
+            
+            @if ($errors->any())
+            <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
+
             <div class="card">
                 <div class="card-header">{{ __('Dashboard') }}</div>
 
@@ -16,19 +31,37 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
+                 
                     <form action="{{ route('send.notification') }}" method="POST">
                         @csrf
+                     
+                        <div class="form-group">
+                            <label>Select Users</label>
+                            <select name="user">
+                            <option value="All">All Users</option>
+                                @foreach($data as $row)
+                                <option value="{{$row->device_token}}">{{$row->name}}</option>
+                                @endforeach
+                            </select>
+                       </div>
                         <div class="form-group">
                             <label>Title</label>
                             <input type="text" class="form-control" name="title">
+                      <img src="" alt="">
                         </div>
                         <div class="form-group">
                             <label>Body</label>
                             <textarea class="form-control" name="body"></textarea>
                           </div>
-                        <button type="submit" class="btn btn-primary">Send Notification</button>
+                          <div class="form-group">
+                            <label>Action Page</label>
+                            <input type="text" class="form-control" name="action">
+                          </div>
+                          @livewire("image-upload")
+     
                     </form>
+
+
 
                 </div>
             </div>
@@ -37,17 +70,17 @@
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <script>
 
     var firebaseConfig = {
-        apiKey: "XXXXXXXXXXX",
-        authDomain: "XXXXXXXX",
-        projectId: "XXXXXXXX",
-        storageBucket: "XXXXXXXXXX",
-        messagingSenderId: "XXXXXXXXX",
-        appId: "XXXXXXXXXXXXX",
-        measurementId: "G-XXXXX"
+  apiKey: "AIzaSyCustYLjU5ChZEWViBIUbjds3BA9N48tFM",
+  authDomain: "push-notification-65342.firebaseapp.com",
+  projectId: "push-notification-65342",
+  storageBucket: "push-notification-65342.appspot.com",
+  messagingSenderId: "289181547379",
+  appId: "1:289181547379:web:d4860b80ceb6e30475a306",
+  measurementId: "G-K7VBV52PT7"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -61,7 +94,7 @@
             })
             .then(function(token) {
                 console.log(token);
-
+                //Function is not firing on Mobile devices
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -93,9 +126,16 @@
         const noteOptions = {
             body: payload.notification.body,
             icon: payload.notification.icon,
+            action: payload.notification.ClickAction,
         };
         new Notification(noteTitle, noteOptions);
     });
+
+    self.addEventListener('notificationclick', function(event) {
+                event.notification.close();
+                console.log('test click event');
+                event.waitUntil(self.clients.openWindow('#'));
+            });
 
 </script>
 @endsection

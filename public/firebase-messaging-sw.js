@@ -10,13 +10,13 @@ Initialize the Firebase app in the service worker by passing in the messagingSen
 * New configuration for app@pulseservice.com
 */
 firebase.initializeApp({
-  apiKey: "XXXXXXXXXXX",
-  authDomain: "XXXXXXXX",
-  projectId: "XXXXXXXX",
-  storageBucket: "XXXXXXXXXX",
-  messagingSenderId: "XXXXXXXXX",
-  appId: "XXXXXXXXXXXXX",
-  measurementId: "G-XXXXX"
+  apiKey: "AIzaSyCustYLjU5ChZEWViBIUbjds3BA9N48tFM",
+  authDomain: "push-notification-65342.firebaseapp.com",
+  projectId: "push-notification-65342",
+  storageBucket: "push-notification-65342.appspot.com",
+  messagingSenderId: "289181547379",
+  appId: "1:289181547379:web:d4860b80ceb6e30475a306",
+  measurementId: "G-K7VBV52PT7"
 });
 
 /*
@@ -32,7 +32,8 @@ messaging.setBackgroundMessageHandler(function(payload) {
   const notificationTitle = "Background Message Title";
   const notificationOptions = {
     body: "Background Message body.",
-    icon: "/itwonders-web-logo.png",
+    icon: '/firebase-logo.png',
+    click_action: "http://127.0.0.1:8000/home"
   };
 
   return self.registration.showNotification(
@@ -40,3 +41,21 @@ messaging.setBackgroundMessageHandler(function(payload) {
     notificationOptions,
   );
 });
+self.addEventListener("push", (payload) => {
+  console.log(payload);
+  let response = payload.data && payload.data.text();
+  let title = JSON.parse(response).notification.title;
+  let body = JSON.parse(response).notification.body;
+  let icon = JSON.parse(response).notification.image;
+
+  payload.waitUntil(
+      self.registration.showNotification(title, { body, icon, image, data: { url: JSON.parse(response).data.url } })
+  )
+});
+
+self.addEventListener('notificationclick', function(payload) {
+  payload.notification.close();
+  payload.waitUntil(
+      clients.openWindow(payload.notification.data.url)
+  );
+}); 
