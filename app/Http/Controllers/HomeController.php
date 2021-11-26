@@ -76,8 +76,8 @@ class HomeController extends Controller
                 "title" => $request->title,
                 "body" => $request->body,
                 "icon"=> "storage/".$Image,
-                'click_action' => 'http://127.0.0.1:8000/' . $request->action, //Change to https when hosted. Only works with system url
-                
+                'click_action' => 'https://devops.adzappr.com/' . $request->action, //Change to https when hosted. Only works with system url
+               
               
 
             ],
