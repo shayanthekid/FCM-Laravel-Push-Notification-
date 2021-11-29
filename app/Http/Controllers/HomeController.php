@@ -51,7 +51,7 @@ class HomeController extends Controller
     {
 
         $validated = $request->validate([
-        'title' => 'required|max:20',
+        'title' => 'required|max:45',
         'body' => 'required|max:50',
         'action'=>'required',
         
