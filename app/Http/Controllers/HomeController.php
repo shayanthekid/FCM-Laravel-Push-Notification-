@@ -75,11 +75,13 @@ class HomeController extends Controller
             "notification" => [
                 "title" => $request->title,
                 "body" => $request->body,
-                "icon"=> "storage/".$Image,
+                "icon"=> "adzapicon.png",
+                'image' =>"storage/".$Image,
                 'click_action' => 'https://devops.adzappr.com/' . $request->action, //Change to https when hosted. Only works with system url
-               
-              
-
+            //for some reason, icon isnt changed in chrome, but works in Internet explorer
+            //must test in devops
+            //time to kill myself
+            
             ],
         ];
         $dataString = json_encode($data);
@@ -88,6 +90,7 @@ class HomeController extends Controller
             'Authorization: key=' . $SERVER_API_KEY,
             'Content-Type: application/json',
         ];
+        
 
         $ch = curl_init();
 

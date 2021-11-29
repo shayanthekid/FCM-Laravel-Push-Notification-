@@ -88,7 +88,11 @@
 
     function initFirebaseMessagingRegistration() {
             messaging
-            .requestPermission()
+            .requestPermission({
+                sound: false,
+                announcement: true,
+                  // ... other permission settings
+            })
             .then(function () {
                 return messaging.getToken()
             })
