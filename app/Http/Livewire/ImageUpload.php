@@ -12,7 +12,7 @@ class ImageUpload extends Component
 
     public function upload(){
         $this->validate([
-            'image' => 'image|max:1024', // 1MB Max
+            'image' => 'image|max:10240', // 10MB Max
         ]);
 
         $path =  $this->image->store('images','public');
