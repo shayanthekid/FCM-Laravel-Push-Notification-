@@ -75,8 +75,8 @@ class HomeController extends Controller
             "notification" => [
                 "title" => $request->title,
                 "body" => $request->body,
-                "icon"=> "adzapicon.png",
-                'image' =>"storage/".$Image,
+                "icon"=> "storage/".$Image,
+                // 'image' =>"storage/".$Image,
                 'click_action' => 'https://devops.adzappr.com/' . $request->action, //Change to https when hosted. Only works with system url
             //for some reason, icon isnt changed in chrome, but works in Internet explorer
             //must test in devops
